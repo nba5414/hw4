@@ -1,6 +1,6 @@
 ---
 title: "Homework 4"
-author: "[Insert your name here]{style='background-color: yellow;'}"
+author: "[Nicholas Allen]{style='background-color: yellow;'}"
 toc: true
 title-block-banner: true
 title-block-style: default
@@ -24,7 +24,7 @@ Please read the instructions carefully before submitting your assignment.
 
 We will be using the following libraries:
 
-```R
+```{R}
 packages <- c(
   "dplyr", 
   "readr", 
@@ -161,10 +161,15 @@ For this question we will use the **Titanic** dataset from the Stanford data arc
 
 Read the data from the following URL as a tibble in R. Preprocess the data such that the variables are of the right data type, e.g., binary variables are encoded as factors, and convert all column names to lower case for consistency. Let's also rename the response variable `Survival` to `y` for convenience.
 
-```R
+```{R}
 url <- "https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/stuff/titanic.csv"
 
-df <- ... # Insert your code here
+df <- read_csv(url) %>% as_tibble() 
+df$Survived <- as.factor(df$Survived)
+df$Pclass <- as.factor(df$Pclass) 
+df <- df %>% rename('y' = 'Survived')
+names(df)[2:8] <- tolower(names(df)[2:8])
+df
 ```
 
 ---
@@ -173,8 +178,8 @@ df <- ... # Insert your code here
 
 Visualize the correlation matrix of all numeric columns in `df` using `corrplot()`
 
-```R
-df %>% ... # Insert your code here
+```{R}
+df %>% select(!c(y, pclass, name, sex)) %>% cor() %>% corrplot()
 ```
 
 
@@ -193,8 +198,9 @@ Fit a logistic regression model to predict the probability of surviving the tita
 * `# parents`
 
 
-```R
-full_model <- ... # Insert your code here
+```{R}
+df <- df %>% select(!name)
+full_model <- glm(y ~ ., data = df, family = binomial)
 summary(full_model)
 ```
 
